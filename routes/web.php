@@ -3,6 +3,7 @@
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +22,15 @@ Route::get('/about', function () {
 // Halaman Blog
 Route::get('/posts', function () {
     // $posts = Post::with(['author', 'category'])->get();
-    $posts = Post::latest()->get();
-    return view('posts', ['title' => 'Halaman Blog', 'posts' => $posts]);
+    $posts = Post::latest();
+
+    // Kode untuk searching
+    // if(request('search')) {
+    //     $posts->where('title', 'like', '%'.request('search').'%');
+    // }
+
+    // $posts->get();
+    return view('posts', ['title' => 'Halaman Blog', 'posts' => Post::filter(request(['search', 'category', 'author']))->latest()->get()]);
 })->name('all-posts');
 
 // Halaman Post detail
